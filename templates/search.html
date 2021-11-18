@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Whoop | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4246ac988c.js" crossorigin="anonymous"></script>
+    <style>
+        body{
+            font-family: 'Roboto'
+        }
+        .box{
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            transform: translate(-50%,-50%);
+        }
+        .input {
+            padding: 10px;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 4px solid #ffd52d;
+            border-radius: 50px;
+            box-sizing: border-box;
+            font-family: 'Roboto';
+            font-size: 26px;
+            color: black;
+            outline: none;
+            transition: .5s;
+        }
+        .box:hover input{
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+        }
+        i{
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translate(-0%,-50%);
+            font-size: 13px;
+            color: #ffd52d;
+            transition: .2s;
+        }
+        .box:hover i{
+            opacity: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <form name="search">
+            <input type="text" class="input" id="search"
+            onchange="document.location = '/search/q=' + document.getElementById('search').value">
+        </form>
+            <i class="fas fa-search"></i>
+    </div>
+    <div style="margin: 5%">
+        {% for i in followed_posts %}
+            <h1 onclick="document.location = '{{ i.onclick }}'">{{ i.title }}</h1>
+            <p>{{ i.content }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <style>
+        body{
+            font-family: 'Roboto'
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 5%">
+    <a href="/home" style="text-decoration: none; color: gray">Home</a>
+    <br>
+    <br>
+        <img src="/profile_p={{ user.profile_pic }}" style="width: 50px; height: 50px; border-radius: 100px" alt="">
+    <br>
+    <p>{{ user.fullname }} ile konuşuyorsun</p>
+    <hr>
+    <div id="chat-box">
+
+
+    </div>
+</div>
+    <div style="background-color: #1877f2; position: fixed; bottom: 15px; width: 95%">
+        <input id="message" type="text" style="width: 80%; border: none; box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%); font-size: 1rem; text-indent: 2.5%; height: 2rem; display: inline-block" placeholder="Mesaj">
+        <button id="buttonMessage" onclick="chat()" style="height: 2rem; width: 18%; color: white; background: transparent; border: none; font-size: 1rem; display: inline-block;">Gönder</button>
+    </div>
+    <script>
+        if(window.innerWidth < window.innerHeight){
+            document.getElementById("buttonMessage").style.width = "30%"
+            document.getElementById("message").style.width = "60%"
+        }
+        function retrieveChatData(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    document.getElementById("chat-box").innerHTML = xhr.responseText;
+                }
+            }
+            xhr.open('GET', '/return_chat/id={{ main_chat.chat_id }}', true);
+            xhr.send(null);
+            setTimeout(retrieveChatData, 200)
+        }
+        retrieveChatData()
+        function chat(){
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/chat/cht={{ main_chat.chat_id }}', true);
+
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.send("message={message}".replace("{message}", document.getElementById("message").value));
+            document.getElementById("message").value = ""
+        }
+    </script>
+</body>
+</html>

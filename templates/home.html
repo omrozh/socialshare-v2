@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Whoop | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4246ac988c.js" crossorigin="anonymous"></script>
+    <style>
+        body{
+            font-family: 'Roboto'
+        }
+        .box{
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            transform: translate(-50%,-50%);
+        }
+        .input {
+            padding: 10px;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 4px solid #ffd52d;
+            border-radius: 50px;
+            box-sizing: border-box;
+            font-family: 'Roboto';
+            font-size: 26px;
+            color: black;
+            outline: none;
+            transition: .5s;
+        }
+        .box:hover input{
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+        }
+        #searchi{
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translate(0%,-50%);
+            font-size: 13px;
+            color: #ffd52d;
+            transition: .2s;
+        }
+        .box:hover i{
+            opacity: 0;
+            z-index: -1;
+        }
+        .imageFrame{
+            width: 250px;
+            height: 300px;
+            border-radius: 5px;
+            background-color: white;
+            border: none;
+            margin-top: 5%;
+            margin-left: 2%;
+            box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <input type="text" class="input" id="search" onchange="document.location = '/search/q=' + document.getElementById('search').value">
+            <i id="searchi" class="fas fa-search"></i>
+    </div>
+
+        <i class="fa fa-user" aria-hidden="true" onclick="document.location = '/profile'" style="cursor: pointer; color: gray; margin: 1%; font-size: 2rem"></i>
+        <i class="fa fa-envelope" aria-hidden="true" onclick="document.location = '/chats'" style="cursor: pointer; color: gray; margin: 1%; margin-left: 2%; font-size: 2rem"></i>
+    <div style="margin: 5%; width: 70%;">
+        <div>
+            <h1>Öneriler</h1>
+            {% for i in recommended %}
+                <button class="imageFrame" onclick="document.location = '/return_user/usr={{ i.id }}'">
+                    <img style="height: 100px; margin-top: 20%; margin-bottom: 25px" src="/profile_p={{ i.profile_pic }}" alt="">
+                    <p>{{ i.fullname }}</p>
+                </button>
+            {% endfor %}
+        </div>
+        <br>
+        <br>
+        {% for i in followed_posts %}
+            <h1>{{ i.title }}</h1>
+            <p>{{ i.content }}</p>
+            <br>
+            {% if i.image != "No image" %}
+                <img src="/profile_p={{ i.image }}" style="width: 250px">
+                <br>
+            {% endif %}
+            {% for c in i.comments.split("&&") %}
+                <p>{{ c }}</p>
+            {% endfor %}
+            <br>
+            <p>{{ i.author }}</p>
+            <div style="background-color: #1877f2">
+                <input onchange="comment(this.value, {{ i.id }})" type="text" style="width: 100%; border: none; box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%); font-size: 1rem; text-indent: 2.5%; height: 2rem; display: inline-block" placeholder="Yorum">
+            </div>
+        <hr>
+        {% endfor %}
+    </div>
+    <div style="width: 15%; position: absolute; top: 20%; right: 5%">
+        {% for i in all_meetings %}
+            {{ i.requester }} seninle {{ i.location }} konumunda {{ i.time }} zamanında buluşmak istiyor
+
+            <i class="fa fa-check" aria-hidden="true" onclick="document.location = '/set_meeting_status/mt={{ i.id }}/sts=kabul edildi'" style="cursor: pointer"></i>
+            <i class="fa fa-times" aria-hidden="true" style="cursor: pointer" onclick="document.location = '/set_meeting_status/mt={{ i.id }}/sts=reddedildi'"></i>
+        {% endfor %}
+    </div>
+    <script>
+        {% for i in pending_meetings %}
+            alert("{{ i.requester }} seninle {{ i.location }} konumunda {{ i.time }} zamanında buluşmak istiyor.")
+        {% endfor %}
+        function comment(comment_body, post_index){
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/home', true);
+
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    window.location.reload()
+                }
+            }
+            xhr.send("comment={comment}&post_index={index}".replace("{comment}", comment_body).replace("{index}", post_index));
+        }
+    </script>
+</body>
+</html>
